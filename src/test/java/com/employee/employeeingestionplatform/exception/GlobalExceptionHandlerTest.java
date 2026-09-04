@@ -20,6 +20,11 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.security.access.AccessDeniedException;
+
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
 import java.util.Set;
@@ -252,6 +257,46 @@ class GlobalExceptionHandlerTest {
                 ),
                 () -> assertEquals(
                         "/api/test",
+                        body.path()
+                ),
+                () -> assertEquals(
+                        "test-correlation-id",
+                        body.correlationId()
+                ),
+                () -> assertNotNull(body.timestamp())
+        );
+    }
+
+    @Test
+    void shouldHandleAccessDeniedException() {
+        ResponseEntity<ApiErrorResponse> response =
+                handler.handleAccessDenied(
+                        new AccessDeniedException(
+                                "Access is denied"
+                        ),
+                        request
+                );
+
+        ApiErrorResponse body = response.getBody();
+
+        assertNotNull(body);
+
+        assertAll(
+                () -> assertEquals(
+                        HttpStatus.FORBIDDEN,
+                        response.getStatusCode()
+                ),
+                () -> assertEquals(403, body.status()),
+                () -> assertEquals(
+                        "Forbidden",
+                        body.error()
+                ),
+                () -> assertEquals(
+                        "You do not have permission to perform this operation",
+                        body.message()
+                ),
+                () -> assertEquals(
+                        request.getRequestURI(),
                         body.path()
                 ),
                 () -> assertEquals(

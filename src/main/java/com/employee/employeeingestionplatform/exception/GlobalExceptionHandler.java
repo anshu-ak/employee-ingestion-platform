@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.security.access.AccessDeniedException;
 
 import java.time.OffsetDateTime;
 import java.util.stream.Collectors;
@@ -106,6 +107,18 @@ public class GlobalExceptionHandler {
         return createResponse(
                 HttpStatus.PAYLOAD_TOO_LARGE,
                 "The uploaded file exceeds the allowed size",
+                request.getRequestURI()
+        );
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ApiErrorResponse> handleAccessDenied(
+            AccessDeniedException exception,
+            HttpServletRequest request
+    ) {
+        return createResponse(
+                HttpStatus.FORBIDDEN,
+                "You do not have permission to perform this operation",
                 request.getRequestURI()
         );
     }
