@@ -1,0 +1,900 @@
+{
+  "info": {
+    "_postman_id": "d92cd284-4460-4217-b23e-c2e126bbd9e0",
+    "name": "Employee Ingestion Platform",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "42750916"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Login - Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Login returns HTTP 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains an access token\", function () {",
+                  "    const response = pm.response.json();",
+                  "",
+                  "    pm.expect(response.accessToken).to.be.a(\"string\");",
+                  "    pm.expect(response.accessToken).not.to.be.empty;",
+                  "});",
+                  "",
+                  "const response = pm.response.json();",
+                  "",
+                  "if (response.accessToken) {",
+                  "    pm.collectionVariables.set(",
+                  "        \"token\",",
+                  "        response.accessToken",
+                  "    );",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"Admin@123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login - Invalid Credentials",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Login returns HTTP 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains an access token\", function () {",
+                  "    const response = pm.response.json();",
+                  "",
+                  "    pm.expect(response.accessToken).to.be.a(\"string\");",
+                  "    pm.expect(response.accessToken).not.to.be.empty;",
+                  "});",
+                  "",
+                  "const response = pm.response.json();",
+                  "",
+                  "if (response.accessToken) {",
+                  "    pm.collectionVariables.set(",
+                  "        \"token\",",
+                  "        response.accessToken",
+                  "    );",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"Admin@123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login - User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"User login returns HTTP 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains an access token\", function () {",
+                  "    const response = pm.response.json();",
+                  "",
+                  "    pm.expect(response.accessToken).to.be.a(\"string\");",
+                  "    pm.expect(response.accessToken).not.to.be.empty;",
+                  "    pm.expect(response.tokenType).to.eql(\"Bearer\");",
+                  "    pm.expect(response.expiresInSeconds).to.eql(3600);",
+                  "});",
+                  "",
+                  "const response = pm.response.json();",
+                  "",
+                  "if (response.accessToken) {",
+                  "    pm.collectionVariables.set(",
+                  "        \"userToken\",",
+                  "        response.accessToken",
+                  "    );",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"user\",\n  \"password\": \"User@123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Employees",
+      "item": [
+        {
+          "name": "Get Employees - Paginated",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Request returns HTTP 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has pagination structure\", function () {",
+                  "    const response = pm.response.json();",
+                  "",
+                  "    pm.expect(response.content).to.be.an(\"array\");",
+                  "    pm.expect(response.page).to.be.a(\"number\");",
+                  "    pm.expect(response.size).to.be.a(\"number\");",
+                  "    pm.expect(response.totalElements).to.be.a(\"number\");",
+                  "    pm.expect(response.totalPages).to.be.a(\"number\");",
+                  "    pm.expect(response.first).to.be.a(\"boolean\");",
+                  "    pm.expect(response.last).to.be.a(\"boolean\");",
+                  "});",
+                  "",
+                  "pm.test(\"Requested page and size are returned\", function () {",
+                  "    const response = pm.response.json();",
+                  "",
+                  "    pm.expect(response.page).to.eql(0);",
+                  "    pm.expect(response.size).to.eql(20);",
+                  "});",
+                  "",
+                  "pm.test(\"Correlation ID is present\", function () {",
+                  "    pm.expect(",
+                  "        pm.response.headers.get(\"X-Correlation-ID\")",
+                  "    ).to.be.a(\"string\").and.not.empty;",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/employees?page=0&size=20&sort=empId,asc",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employees"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                },
+                {
+                  "key": "sort",
+                  "value": "empId,asc"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Employees - Unauthorized",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Request without a token returns HTTP 401\", function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});",
+                  "",
+                  "pm.test(\"Request is not reported as a server error\", function () {",
+                  "    pm.expect(pm.response.code).not.to.eql(500);",
+                  "});",
+                  "",
+                  "pm.test(\"Correlation ID is returned\", function () {",
+                  "    const correlationId =",
+                  "        pm.response.headers.get(\"X-Correlation-ID\");",
+                  "",
+                  "    pm.expect(correlationId).to.be.a(\"string\");",
+                  "    pm.expect(correlationId).not.to.be.empty;",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/employees?page=0&size=20&sort=empId,asc",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employees"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                },
+                {
+                  "key": "sort",
+                  "value": "empId,asc"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Employees - Filtered",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Request returns HTTP 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has pagination structure\", function () {",
+                  "    const response = pm.response.json();",
+                  "",
+                  "    pm.expect(response.content).to.be.an(\"array\");",
+                  "    pm.expect(response.page).to.be.a(\"number\");",
+                  "    pm.expect(response.size).to.be.a(\"number\");",
+                  "    pm.expect(response.totalElements).to.be.a(\"number\");",
+                  "    pm.expect(response.totalPages).to.be.a(\"number\");",
+                  "    pm.expect(response.first).to.be.a(\"boolean\");",
+                  "    pm.expect(response.last).to.be.a(\"boolean\");",
+                  "});",
+                  "",
+                  "pm.test(\"Requested page and size are returned\", function () {",
+                  "    const response = pm.response.json();",
+                  "",
+                  "    pm.expect(response.page).to.eql(0);",
+                  "    pm.expect(response.size).to.eql(20);",
+                  "});",
+                  "",
+                  "pm.test(\"Correlation ID is present\", function () {",
+                  "    pm.expect(",
+                  "        pm.response.headers.get(\"X-Correlation-ID\")",
+                  "    ).to.be.a(\"string\").and.not.empty;",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/employees?page=0&size=20&sort=empId,asc",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employees"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                },
+                {
+                  "key": "sort",
+                  "value": "empId,asc"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Employee - Verify Kafka Ingestion",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Uploads",
+      "item": [
+        {
+          "name": "Upload Excel - Partial Failure Sample",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Upload returns HTTP 202\", function () {",
+                  "    pm.response.to.have.status(202);",
+                  "});",
+                  "",
+                  "pm.test(\"Upload response has the expected fields\", function () {",
+                  "    const response = pm.response.json();",
+                  "",
+                  "    pm.expect(response.trackingId).to.be.a(\"string\");",
+                  "    pm.expect(response.fileName)",
+                  "        .to.eql(\"employees-partial-failure.xlsx\");",
+                  "    pm.expect(response.status).to.eql(\"PENDING\");",
+                  "    pm.expect(response.message).to.be.a(\"string\");",
+                  "});",
+                  "",
+                  "pm.test(\"Correlation ID is returned\", function () {",
+                  "    const correlationId =",
+                  "        pm.response.headers.get(\"X-Correlation-ID\");",
+                  "",
+                  "    pm.expect(correlationId).to.be.a(\"string\");",
+                  "    pm.expect(correlationId).not.to.be.empty;",
+                  "});",
+                  "",
+                  "const response = pm.response.json();",
+                  "",
+                  "if (response.trackingId) {",
+                  "    pm.collectionVariables.set(",
+                  "        \"trackingId\",",
+                  "        response.trackingId",
+                  "    );",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "uuid": "b6300478-350c-482b-99d2-a6f901e0097b",
+                  "src": "/Users/anshukumari/Documents/TavantAssignment/employee-ingestion-platform/samples/excel/employees-partial-failure.xlsx"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/employees/upload",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employees",
+                "upload"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Upload Excel - Valid 10000 Rows",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Large Excel upload returns HTTP 202\", function () {",
+                  "    pm.response.to.have.status(202);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains the large-upload details\", function () {",
+                  "    const response = pm.response.json();",
+                  "",
+                  "    pm.expect(response.trackingId).to.be.a(\"string\");",
+                  "    pm.expect(response.fileName)",
+                  "        .to.eql(\"employees-valid-10000.xlsx\");",
+                  "    pm.expect(response.status).to.eql(\"PENDING\");",
+                  "    pm.expect(response.message).to.be.a(\"string\");",
+                  "});",
+                  "",
+                  "pm.test(\"Correlation ID is returned\", function () {",
+                  "    const correlationId =",
+                  "        pm.response.headers.get(\"X-Correlation-ID\");",
+                  "",
+                  "    pm.expect(correlationId).to.be.a(\"string\");",
+                  "    pm.expect(correlationId).not.to.be.empty;",
+                  "});",
+                  "",
+                  "const response = pm.response.json();",
+                  "",
+                  "if (response.trackingId) {",
+                  "    pm.collectionVariables.set(",
+                  "        \"trackingId\",",
+                  "        response.trackingId",
+                  "    );",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "uuid": "b6300478-350c-482b-99d2-a6f901e0097b",
+                  "src": "/Users/anshukumari/Documents/TavantAssignment/employee-ingestion-platform/samples/excel/employees-valid-10000.xlsx"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/employees/upload",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employees",
+                "upload"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Upload Excel - Forbidden for USER",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Upload returns HTTP 202\", function () {",
+                  "    pm.response.to.have.status(202);",
+                  "});",
+                  "",
+                  "pm.test(\"Upload response has the expected fields\", function () {",
+                  "    const response = pm.response.json();",
+                  "",
+                  "    pm.expect(response.trackingId).to.be.a(\"string\");",
+                  "    pm.expect(response.fileName)",
+                  "        .to.eql(\"employees-partial-failure.xlsx\");",
+                  "    pm.expect(response.status).to.eql(\"PENDING\");",
+                  "    pm.expect(response.message).to.be.a(\"string\");",
+                  "});",
+                  "",
+                  "pm.test(\"Correlation ID is returned\", function () {",
+                  "    const correlationId =",
+                  "        pm.response.headers.get(\"X-Correlation-ID\");",
+                  "",
+                  "    pm.expect(correlationId).to.be.a(\"string\");",
+                  "    pm.expect(correlationId).not.to.be.empty;",
+                  "});",
+                  "",
+                  "const response = pm.response.json();",
+                  "",
+                  "if (response.trackingId) {",
+                  "    pm.collectionVariables.set(",
+                  "        \"trackingId\",",
+                  "        response.trackingId",
+                  "    );",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "uuid": "b6300478-350c-482b-99d2-a6f901e0097b",
+                  "src": "/Users/anshukumari/Documents/TavantAssignment/employee-ingestion-platform/samples/excel/employees-partial-failure.xlsx"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/employees/upload",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employees",
+                "upload"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Upload Status",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Request returns HTTP 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response belongs to the requested upload\", function () {",
+                  "    const response = pm.response.json();",
+                  "    const trackingId =",
+                  "        pm.collectionVariables.get(\"trackingId\");",
+                  "",
+                  "    pm.expect(response.trackingId).to.eql(trackingId);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains upload statistics\", function () {",
+                  "    const response = pm.response.json();",
+                  "",
+                  "    pm.expect(response.fileName).to.be.a(\"string\");",
+                  "    pm.expect(response.status).to.be.a(\"string\");",
+                  "    pm.expect(response.totalRows).to.be.a(\"number\");",
+                  "    pm.expect(response.successRows).to.be.a(\"number\");",
+                  "    pm.expect(response.rejectedRows).to.be.a(\"number\");",
+                  "    pm.expect(response.createdAt).to.be.a(\"string\");",
+                  "});",
+                  "",
+                  "pm.test(\"Upload status is valid\", function () {",
+                  "    const response = pm.response.json();",
+                  "",
+                  "    const allowedStatuses = [",
+                  "        \"PENDING\",",
+                  "        \"PROCESSING\",",
+                  "        \"COMPLETED\",",
+                  "        \"PARTIALLY_COMPLETED\",",
+                  "        \"FAILED\"",
+                  "    ];",
+                  "",
+                  "    pm.expect(allowedStatuses).to.include(response.status);",
+                  "});",
+                  "",
+                  "pm.test(\"Processed row counts are consistent\", function () {",
+                  "    const response = pm.response.json();",
+                  "",
+                  "    pm.expect(response.totalRows).to.be.at.least(0);",
+                  "    pm.expect(response.successRows).to.be.at.least(0);",
+                  "    pm.expect(response.rejectedRows).to.be.at.least(0);",
+                  "",
+                  "    if (",
+                  "        response.status === \"COMPLETED\" ||",
+                  "        response.status === \"PARTIALLY_COMPLETED\"",
+                  "    ) {",
+                  "        pm.expect(",
+                  "            response.successRows + response.rejectedRows",
+                  "        ).to.eql(response.totalRows);",
+                  "    }",
+                  "});",
+                  "",
+                  "pm.test(\"Correlation ID is returned\", function () {",
+                  "    const correlationId =",
+                  "        pm.response.headers.get(\"X-Correlation-ID\");",
+                  "",
+                  "    pm.expect(correlationId).to.be.a(\"string\");",
+                  "    pm.expect(correlationId).not.to.be.empty;",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/employees/uploads/{{trackingId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employees",
+                "uploads",
+                "{{trackingId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Process Upload Manually",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Processing request returns HTTP 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response belongs to the requested upload\", function () {",
+                  "    const response = pm.response.json();",
+                  "    const trackingId =",
+                  "        pm.collectionVariables.get(\"trackingId\");",
+                  "",
+                  "    pm.expect(response.trackingId).to.eql(trackingId);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains batch execution information\", function () {",
+                  "    const response = pm.response.json();",
+                  "",
+                  "    pm.expect(response.jobExecutionId).to.be.a(\"number\");",
+                  "    pm.expect(response.batchStatus).to.be.a(\"string\");",
+                  "    pm.expect(response.uploadStatus).to.be.a(\"string\");",
+                  "});",
+                  "",
+                  "pm.test(\"Batch and upload statuses are valid\", function () {",
+                  "    const response = pm.response.json();",
+                  "",
+                  "    const allowedBatchStatuses = [",
+                  "        \"STARTING\",",
+                  "        \"STARTED\",",
+                  "        \"STOPPING\",",
+                  "        \"STOPPED\",",
+                  "        \"FAILED\",",
+                  "        \"COMPLETED\",",
+                  "        \"ABANDONED\",",
+                  "        \"UNKNOWN\"",
+                  "    ];",
+                  "",
+                  "    const allowedUploadStatuses = [",
+                  "        \"PENDING\",",
+                  "        \"PROCESSING\",",
+                  "        \"COMPLETED\",",
+                  "        \"PARTIALLY_COMPLETED\",",
+                  "        \"FAILED\"",
+                  "    ];",
+                  "",
+                  "    pm.expect(allowedBatchStatuses)",
+                  "        .to.include(response.batchStatus);",
+                  "",
+                  "    pm.expect(allowedUploadStatuses)",
+                  "        .to.include(response.uploadStatus);",
+                  "});",
+                  "",
+                  "pm.test(\"Correlation ID is returned\", function () {",
+                  "    const correlationId =",
+                  "        pm.response.headers.get(\"X-Correlation-ID\");",
+                  "",
+                  "    pm.expect(correlationId).to.be.a(\"string\");",
+                  "    pm.expect(correlationId).not.to.be.empty;",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/employees/uploads/{{trackingId}}/process",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "employees",
+                "uploads",
+                "{{trackingId}}",
+                "process"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Upload Rejections",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Monitoring",
+      "item": [
+        {
+          "name": "Application Health",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": ""
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "trackingId",
+      "value": ""
+    },
+    {
+      "key": "userToken",
+      "value": ""
+    }
+  ]
+}
