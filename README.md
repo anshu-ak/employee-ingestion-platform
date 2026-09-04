@@ -362,7 +362,7 @@ Example response:
 
 ```json
 {
-  "trackingId": "generated2bf-...-generated2bf",
+  "trackingId": "94890b60-0eff-42aa-88a3-3500a2263fa7",
   "fileName": "employees-partial-failure.xlsx",
   "status": "PENDING",
   "message": "File uploaded successfully and is awaiting processing"
@@ -387,7 +387,7 @@ Check its status:
 
 ```bash
 curl -s \
-  "http://localhost:8080/api5bf/api/v1/employees/uploads/$TRACKING_ID" \
+  "http://localhost:8080/api/v1/employees/uploads/$TRACKING_ID" \
   -H "Authorization: Bearer $EMPLOYEE_TOKEN"
 ```
 
