@@ -1,0 +1,8 @@
+{
+  "empId": "KAFKA90001",
+  "firstName": "Duplicate",
+  "lastName": "Employee",
+  "email": "duplicate.kafka90001@example.com",
+  "department": "Finance",
+  "salary": 110000
+}

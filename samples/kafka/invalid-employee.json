@@ -1,0 +1,8 @@
+{
+  "empId": "KAFKA90002",
+  "firstName": "Invalid",
+  "lastName": "Employee",
+  "email": "not-a-valid-email",
+  "department": "Engineering",
+  "salary": 95000
+}
