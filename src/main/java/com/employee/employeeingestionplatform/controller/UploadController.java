@@ -15,12 +15,17 @@ import com.employee.employeeingestionplatform.dto.upload.RejectedRecordResponse;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import org.springframework.validation.annotation.Validated;
+import com.employee.employeeingestionplatform.config.OpenApiConfig;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 import java.util.UUID;
 
 @RestController
 @Validated
 @RequestMapping("/api/v1/employees")
+@SecurityRequirement(
+        name = OpenApiConfig.SECURITY_SCHEME_NAME
+)
 public class UploadController {
 
     private final UploadService uploadService;

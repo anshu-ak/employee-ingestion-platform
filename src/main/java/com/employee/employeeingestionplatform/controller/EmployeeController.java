@@ -10,12 +10,17 @@ import jakarta.validation.constraints.Min;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import com.employee.employeeingestionplatform.config.OpenApiConfig;
 
 import java.math.BigDecimal;
 
 @RestController
 @RequestMapping("/api/v1/employees")
 @Validated
+@SecurityRequirement(
+        name = OpenApiConfig.SECURITY_SCHEME_NAME
+)
 public class EmployeeController {
 
     private final EmployeeService employeeService;
